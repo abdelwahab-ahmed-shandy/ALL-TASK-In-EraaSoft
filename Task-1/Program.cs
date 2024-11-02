@@ -1,4 +1,4 @@
-﻿using System.Runtime.ConstrainedExecution;
+using System.Runtime.ConstrainedExecution;
 
 namespace Task_1
 {
@@ -23,10 +23,10 @@ namespace Task_1
             Console.WriteLine("Price Per Large Room : 35$ ");
 
             int TotalCost = (SmallCarpet * PriceSmallCarpets) + (LargeCarpet * PriceLargeCarpets);
-            Console.WriteLine($"Cost : {TotalCost}");
+            Console.WriteLine($"Cost : {TotalCost}$");
             Console.WriteLine("Tax : 6.6$");
             Console.WriteLine("=================================================================");
-            Console.WriteLine($"Total Estimate : {TotalCost + Tax}");
+            Console.WriteLine($"Total Estimate : {TotalCost + Tax}$");
             Console.WriteLine("This Estimate Is Valid For 30 Days");
         }
     }
