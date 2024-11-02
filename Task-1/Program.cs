@@ -19,6 +19,7 @@ namespace Task_1
             //I found out that the float must have an f after the value in order for it to be accepted.
             //I don't know why.
             const float Tax = 6.6f;
+            //After I did the search task, I understood the reason ")).
             Console.WriteLine("Price Per Small Room : 25$ ");
             Console.WriteLine("Price Per Large Room : 35$ ");
 
