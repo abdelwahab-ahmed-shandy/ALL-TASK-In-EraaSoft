@@ -27,7 +27,7 @@ namespace Task___2
 
             while (EnterCharacter != 'Q')
             {
-                Console.Write("Chosse Any Character : ");
+                Console.Write("\nChosse Any Character : ");
                 EnterCharacter = char.Parse(Console.ReadLine().ToUpper());
 
                 if (EnterCharacter == 'P')
@@ -35,11 +35,14 @@ namespace Task___2
                     Console.Write("Print Numbers : ");
                     if (ListNumber.Count > 0)
                     {
-                        Console.WriteLine(string.Join(", ", ListNumber));
-                    }
+                        for (int i = 0; i < ListNumber.Count; i++) 
+                        { 
+                        Console.Write($"{ListNumber[i]} ," );
+                        }
+                }
                     else
                     {
-                        Console.WriteLine("The List Empty\n");
+                        Console.WriteLine("The List Empty \n");
                     }
                 }
 
@@ -128,9 +131,9 @@ namespace Task___2
                             {
                                 Console.WriteLine($"The Number Is Available : {FoundNumber}\n");
                                 IsFound = true;
-                                break;
-                            }
-                        }
+                                break; 
+                            }    
+                        }                                                   
                     }
                     else
                     {
