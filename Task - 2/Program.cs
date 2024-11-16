@@ -8,6 +8,9 @@ namespace Task___2
 {
     internal class Program
     {
+        /// <summary>
+        /// Prints the main menu.
+        /// </summary>
         static void PrintMainMenu()
         {
             Console.WriteLine("\n===============================================");
@@ -22,12 +25,20 @@ namespace Task___2
             Console.WriteLine("===============================================\n");
         }
 
+        /// <summary>
+        /// Asks The User About The Entered Character.
+        /// </summary>
+        /// <returns>Returns The Character Entered By The User</returns>
         static char ReadSelection()
         {
             Console.Write("\nChosse Any Character : ");
             return char.Parse(Console.ReadLine().ToUpper());
         }
 
+        /// <summary>
+        /// Prints All The Numbers In The List
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
         static void PrintNumbersOfList(List<int> ListNumber)
         {
             Console.Write("Print Numbers : ");
@@ -45,6 +56,10 @@ namespace Task___2
             }
         }
 
+        /// <summary>
+        /// Adds A New Number To The List
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
         static void AddNumberInList(List<int> ListNumber)
         {
             Console.Write("Add Number : ");
@@ -52,13 +67,20 @@ namespace Task___2
             ListNumber.Add(EnterNumber);
             Console.WriteLine($"Number {EnterNumber} Is Added\n");
         }
-
+        /// <summary>
+        /// Deletes All Numbers In The List
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
         static void ClearList(List<int> ListNumber)
         {
             Console.WriteLine("Clear The Whole List\n");
             ListNumber.Clear();
         }
 
+        /// <summary>
+        /// Collects Numbers And Averages
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
         static void SumAndAverage(List<int> ListNumber)
         {
             if (ListNumber.Count > 0)
@@ -76,7 +98,11 @@ namespace Task___2
                 Console.WriteLine("The List Empty , You Can First Enter Numbers\n");
             }
         }
-
+        /// <summary>
+        /// It Outputs The Smallest Number
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
+        /// <returns>Returns The Smallest Number</returns>
         static int SmallerNumber(List<int> ListNumber)
         {
             int SmallerNumber = 2147483647, LargerNumber = 0;
@@ -87,7 +113,11 @@ namespace Task___2
             }
             return SmallerNumber;
         }
-
+        /// <summary>
+        /// It Outputs The Larger Number
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
+        /// <returns>Returns The Larger Number</returns>
         static int LargerNumber(List<int> ListNumber)
         {
             int LargerNumber = 0;
@@ -98,7 +128,10 @@ namespace Task___2
             }
             return LargerNumber;
         }
-
+        /// <summary>
+        /// It Finds A Specific Number That The User Requests
+        /// </summary>
+        /// <param name="ListNumber">The List He Is Working On</param>
         static void FindNumber(List<int> ListNumber)
         {
             bool IsFound = false;
@@ -121,7 +154,9 @@ namespace Task___2
             }
 
         }
-
+        /// <summary>
+        /// Prints Out Of The Program
+        /// </summary>
         static void PrintEnding()
         {
             Console.WriteLine("===============================================");
