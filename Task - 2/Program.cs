@@ -2,6 +2,7 @@
 I was going to write the whole task, but I found that there are too many words.
 I will save time for something else that is better.
 I will write the title, but when I have free time...
+We used both static void and static that return values ​​only for practice......
  */
 namespace Task___2
 {
