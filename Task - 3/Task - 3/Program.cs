@@ -46,8 +46,6 @@ namespace Task___3
                 Console.WriteLine($"Thanks for returning the {title}");
             else
                 Console.WriteLine($"The {title} is already there, will you return it?");
-
-
         }
 
     }
