@@ -97,6 +97,27 @@
         }
     }
 
+    public class TrustAccount : Account
+    {
+        public decimal InterstRate { get; set; }
+
+        public TrustAccount(string name = "null", decimal balance = 0, decimal interstRate = 0) : base(name, balance)
+        {
+            if (InterstRate < 0)
+                throw new ArgumentException("Can Not Be Less Than Zero");
+            InterstRate = interstRate;
+
+            if (balance <= 5000.00m)
+                balance = balance + 50;
+
+        }
+
+
+        public override string ToString()
+        {
+            return $"{base.ToString()} Rate is {InterstRate}";
+        }
+    }
     internal class Program
     {
         static void Main(string[] args)
@@ -134,6 +155,22 @@
             AccountUntil.DesplayDeposit(CheckList, 2000);
             AccountUntil.DesplayWithdrow(CheckList, 2000);
 
+            // Trust
+            Console.WriteLine("\nTrust");
+
+            var trustAccounts = new List<TrustAccount>();
+            trustAccounts.Add(new TrustAccount());
+            trustAccounts.Add(new TrustAccount("Superman2"));
+            trustAccounts.Add(new TrustAccount("Batman2", 2000));
+            trustAccounts.Add(new TrustAccount("Wonderwoman2", 5000));
+
+            var TrustList = checAccounts.ConvertAll(trust => (Account)trust);
+
+            AccountUntil.DesplayAccount(TrustList);
+            AccountUntil.DesplayDeposit(TrustList, 6000);
+            AccountUntil.DesplayWithdrow(TrustList, 2000);
+            AccountUntil.DesplayWithdrow(TrustList, 3000);
+            AccountUntil.DesplayWithdrow(TrustList, 500);
         }
     }
 }
