@@ -33,9 +33,7 @@ Hints:
 
 namespace Task___4
 {
-   namespace ConsoleApp1
-{
-    public class Account
+       public class Account
     {
         public string Name { get; set; }
         public double Balance { get; set; }
@@ -56,7 +54,7 @@ namespace Task___4
             return false;
         }
 
-        public bool Withdraw(double amount)
+        public virtual bool Withdraw(double amount)
         {
             if (Balance - amount >= 0)
             {
@@ -140,12 +138,14 @@ namespace Task___4
     public class TrustAccount : Account
     {
         public double InterstRate { get; set; }
-
+        //public int Count { get; set; }
+        public List <DateTime> Date { get; set; }
         public TrustAccount(string name = "null", double balance = 0, double interstRate = 0) : base(name, balance)
         {
             if (InterstRate < 0)
                 throw new Exception("Can Not Be Less Than Zero");
             InterstRate = interstRate;
+            Date = new List<DateTime>();
         }
         public override bool Deposit(double amount)
         {
@@ -154,8 +154,36 @@ namespace Task___4
                 base.Deposit(50);
                 Console.WriteLine($"Add Bouns Account is {Name}");
             }
-                return base.Deposit(amount);
+            return base.Deposit(amount);
+        }
+        
+        public override bool Withdraw(double amount)
+        {
+            Date = new List <DateTime>();
+            DateTime startYear = new DateTime(DateTime.Now.Year, 1, 1);
+           // DateTime EndYear = new DateTime(DateTime.Now.Year, 12, 30);
+            if(Date.Count >=3)
+            {
+                Console.WriteLine("Can Not Withdrow , failled");
+                return false;
             }
+            if (amount < 0.2)
+            {
+                Console.WriteLine("Invalid can not Withdrow becouse < 20%");
+                return false;
+            }
+            if (base.Withdraw(amount))
+            {
+                Date.Add(DateTime.Now);
+                Console.WriteLine("Vailed proccess withdraw");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("InValed proccess withdraw");
+                return false;
+            }
+        }
         public override string ToString()
         {
             return $"Trusted Account : {base.ToString()} Rate is {InterstRate}";
@@ -165,7 +193,8 @@ namespace Task___4
     {
         static void Main(string[] args)
         {
-           // Accounts
+            // Accounts
+            Console.WriteLine("Accounts :");
             var accounts = new List<Account>();
             accounts.Add(new Account());
             accounts.Add(new Account("Larry"));
@@ -177,6 +206,7 @@ namespace Task___4
             AccountUtil.Withdraw(accounts, 2000);
 
             // Savings
+            Console.WriteLine("Saving Accounts :");
             var savAccounts = new List<Account>();
             savAccounts.Add(new SavingsAccount());
             savAccounts.Add(new SavingsAccount("Superman"));
@@ -188,6 +218,7 @@ namespace Task___4
             AccountUtil.Withdraw(savAccounts, 2000);
 
             // Checking
+            Console.WriteLine("Chascking Accounts :");
             var checAccounts = new List<Account>();
             checAccounts.Add(new CheckingAccount());
             checAccounts.Add(new CheckingAccount("Larry2"));
@@ -200,6 +231,7 @@ namespace Task___4
             AccountUtil.Withdraw(checAccounts, 2000);
 
             // Trust
+            Console.WriteLine("Trust Accounts :");
             var trustAccounts = new List<Account>();
             trustAccounts.Add(new TrustAccount());
             trustAccounts.Add(new TrustAccount("Superman2"));
@@ -207,10 +239,13 @@ namespace Task___4
             trustAccounts.Add(new TrustAccount("Wonderwoman2", 5000, 5.0));
 
             AccountUtil.Display(trustAccounts);
+            Console.WriteLine("Add 5000 Bouns 50 :");
             AccountUtil.Deposit(trustAccounts, 1000);
             AccountUtil.Deposit(trustAccounts, 6000);
             
-            AccountUtil.Withdraw(trustAccounts, 2000);
+            Console.WriteLine("Check 3 Widthrawal :");
+
+            //AccountUtil.Withdraw(trustAccounts, 2000);
             AccountUtil.Withdraw(trustAccounts, 3000);
             AccountUtil.Withdraw(trustAccounts, 500);
 
