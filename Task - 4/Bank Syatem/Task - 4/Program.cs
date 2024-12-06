@@ -1,19 +1,52 @@
-﻿namespace Task___4
+/*
+ // Inheritance & operator overloading
+
+You are provided with a simple Account class
+
+An Account has a name and a balance.
+
+I have also provided some Account helper functions in AccountUtil
+that make it easy to display, deposit to, and withdraw from a list of Accounts.
+
+Your task is the following:
+
+1. Add a Savings Account class to the Account hierarchy and adds an interest rata.
+
+2. Add a Checking account class to the Account hierarchy
+    A Checking account has a name and a balance and has a fee of $1.50 per withdrawal transaction.
+    Every withdrawal transaction will be assessed this flat fee.
+
+3. Add a Trust account class to the Account hierarchy
+    A Trust account has a name, a balance, and an interest rate
+    The Trust account deposit works just like a savings account deposit.
+    However, any deposits of $5000.00 or more will receive a $50.00 bonus deposited to the account.
+   
+    The Trust account withdrawal should only allow 3 withdrawals per year and each of these must be less than 20% of the account balance.
+    
+4. Overload + operator in Account class (to sum the balances of two objects you will be create in Main)
+
+
+Hints: 
+    Reuse existing functionality!!
+    override to string always!
+ */
+
+namespace Task___4
+{
+   namespace ConsoleApp1
 {
     public class Account
     {
         public string Name { get; set; }
-        public decimal Balance { get; set; }
-        public Account(string name = "Null", decimal balance = 0)
+        public double Balance { get; set; }
+
+        public Account(string Name = "Unnamed Account", double Balance = 0.0)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException("You Did Not Enter A Name");
-            if (balance < 0)
-                throw new Exception("Can Not Be Less Than Zero");
-            Name = name;
-            Balance = balance;
+            this.Name = Name;
+            this.Balance = Balance;
         }
-        public bool Deposit(decimal amount)
+
+        public virtual bool Deposit(double amount)
         {
             if (amount > 0)
             {
@@ -22,155 +55,166 @@
             }
             return false;
         }
-        public bool Withdrow(decimal amount)
+
+        public bool Withdraw(double amount)
         {
             if (Balance - amount >= 0)
             {
-                Balance -= amount ;
+                Balance -= amount;
                 return true;
             }
             return false;
         }
+
         public override string ToString()
         {
             return $"Name Is {Name} , Balance {Balance}";
         }
     }
-    public static class AccountUntil
+    public static class AccountUtil
     {
-        public static void DesplayAccount(List<Account> accounts)
+        // Utility helper functions for Account class
+
+        public static void Display(List<Account> accounts)
         {
-            Console.WriteLine("\n==== Account =====================================");
-            foreach (var account in accounts)
+            Console.WriteLine("\n=== Accounts ==========================================");
+            foreach (var acc in accounts)
             {
-                Console.WriteLine(account);
+                Console.WriteLine(acc);
             }
         }
-        public static void DesplayDeposit(List<Account> accounts, decimal amount)
+
+        public static void Deposit(List<Account> accounts, double amount)
         {
-            Console.WriteLine("\n==== Deposited To Accounts =====================================");
-            foreach (var account in accounts)
+            Console.WriteLine("\n=== Depositing to Accounts =================================");
+            foreach (var acc in accounts)
             {
-                if (account.Deposit(amount))
-                    Console.WriteLine($"Deposited {amount} to {account}");
+                if (acc.Deposit(amount))
+                    Console.WriteLine($"Deposited {amount} to {acc}");
                 else
-                    Console.WriteLine($"Failed Deposit of {amount} to {account}");
+                    Console.WriteLine($"Failed Deposit of {amount} to {acc}");
             }
         }
-        public static void DesplayWithdrow(List<Account> accounts, decimal amount)
+
+        public static void Withdraw(List<Account> accounts, double amount)
         {
-            Console.WriteLine("\n==== Withdrawing from Accounts =====================================");
-            foreach (var account in accounts)
+            Console.WriteLine("\n=== Withdrawing from Accounts ==============================");
+            foreach (var acc in accounts)
             {
-                if (account.Withdrow(amount))
-                    Console.WriteLine($"Withdrew {amount} from {account}");
+                if (acc.Withdraw(amount))
+                    Console.WriteLine($"Withdrew {amount} from {acc}");
                 else
-                    Console.WriteLine($"Failed Withdrawal of {amount} from {account}");
+                    Console.WriteLine($"Failed Withdrawal of {amount} from {acc}");
             }
         }
     }
     public class SavingsAccount : Account
     {
-        public decimal InterstRate { get; set; }
-        public SavingsAccount(string name = "null", decimal balance = 0, decimal interstRate = 0) : base(name, balance)
+        public double InterstRate { get; set; }
+
+        public SavingsAccount(string name = "null", double balance = 0.0, double interstRate = 0.0): base(name, balance)
         {
-            if (InterstRate < 0)
-                throw new ArgumentException("Can Not Be Less Than Zero");
+            if (interstRate < 0)
+                throw new Exception("Can Not Be Less Than Zero");
             InterstRate = interstRate;
         }
 
         public override string ToString()
         {
-            return $"{base.ToString()} Rate is {InterstRate}";
+            return $"{base.ToString()}, Interest Rate: {InterstRate}";
         }
     }
-    public class CheckingAccount:Account
+    public class CheckingAccount : Account
     {
-        const decimal Fee = 1.50m;
-        public CheckingAccount(string name = "Null", decimal balance = 0) : base(name, balance)
+        const double Fee = 1.50;
+        public CheckingAccount(string name = "Null", double balance = 0) : base(name, balance)
         {
             balance = balance - Fee;
         }
         public override string ToString()
         {
-            return $"Name {Name} Balance {Balance - Fee}";
+            return $"{base.ToString()}, Balance after fees : {Balance - Fee}";
         }
     }
 
     public class TrustAccount : Account
     {
-        public decimal InterstRate { get; set; }
+        public double InterstRate { get; set; }
 
-        public TrustAccount(string name = "null", decimal balance = 0, decimal interstRate = 0) : base(name, balance)
+        public TrustAccount(string name = "null", double balance = 0, double interstRate = 0) : base(name, balance)
         {
             if (InterstRate < 0)
-                throw new ArgumentException("Can Not Be Less Than Zero");
+                throw new Exception("Can Not Be Less Than Zero");
             InterstRate = interstRate;
-
-            if (balance <= 5000.00m)
-                balance = balance + 50;
-
         }
-
-
+        public override bool Deposit(double amount)
+        {
+            if (amount >= 5000)
+            {
+                base.Deposit(50);
+                Console.WriteLine($"Add Bouns Account is {Name}");
+            }
+                return base.Deposit(amount);
+            }
         public override string ToString()
         {
-            return $"{base.ToString()} Rate is {InterstRate}";
+            return $"Trusted Account : {base.ToString()} Rate is {InterstRate}";
         }
     }
     internal class Program
     {
         static void Main(string[] args)
         {
-            //Account 
+           // Accounts
             var accounts = new List<Account>();
+            accounts.Add(new Account());
             accounts.Add(new Account("Larry"));
             accounts.Add(new Account("Moe", 2000));
             accounts.Add(new Account("Curly", 5000));
 
-            AccountUntil.DesplayAccount(accounts);
-            AccountUntil.DesplayDeposit(accounts, 1000);
-            AccountUntil.DesplayWithdrow(accounts, 500);
+            AccountUtil.Display(accounts);
+            AccountUtil.Deposit(accounts, 1000);
+            AccountUtil.Withdraw(accounts, 2000);
 
             // Savings
-            var savAccounts = new List<SavingsAccount>();
+            var savAccounts = new List<Account>();
+            savAccounts.Add(new SavingsAccount());
             savAccounts.Add(new SavingsAccount("Superman"));
-            savAccounts.Add(new SavingsAccount("Batman", 2000));
-            savAccounts.Add(new SavingsAccount("Wonderwoman", 5000, 5.0m));
+            savAccounts.Add(new SavingsAccount("Batman", 20000));
+            savAccounts.Add(new SavingsAccount("Wonderwoman", 50000, 5.0));
 
-                            // Thid new next search 
-            var accountList = savAccounts.ConvertAll(account => (Account)account);
-            AccountUntil.DesplayAccount(accountList);
-            AccountUntil.DesplayDeposit(accountList, 1000);
-            AccountUntil.DesplayWithdrow(accountList, 2000);
+            AccountUtil.Display(savAccounts);
+            AccountUtil.Deposit(savAccounts, 1000);
+            AccountUtil.Withdraw(savAccounts, 2000);
 
             // Checking
-            var checAccounts = new List<CheckingAccount>();
+            var checAccounts = new List<Account>();
+            checAccounts.Add(new CheckingAccount());
             checAccounts.Add(new CheckingAccount("Larry2"));
             checAccounts.Add(new CheckingAccount("Moe2", 2000));
             checAccounts.Add(new CheckingAccount("Curly2", 5000));
 
-            var CheckList = checAccounts.ConvertAll(check => (Account)check);
-            AccountUntil.DesplayAccount(CheckList);
-            AccountUntil.DesplayDeposit(CheckList, 2000);
-            AccountUntil.DesplayWithdrow(CheckList, 2000);
+            AccountUtil.Display(checAccounts);
+            AccountUtil.Deposit(checAccounts, 1000);
+            AccountUtil.Withdraw(checAccounts, 2000);
+            AccountUtil.Withdraw(checAccounts, 2000);
 
             // Trust
-            Console.WriteLine("\nTrust");
-
-            var trustAccounts = new List<TrustAccount>();
+            var trustAccounts = new List<Account>();
             trustAccounts.Add(new TrustAccount());
             trustAccounts.Add(new TrustAccount("Superman2"));
             trustAccounts.Add(new TrustAccount("Batman2", 2000));
-            trustAccounts.Add(new TrustAccount("Wonderwoman2", 5000));
+            trustAccounts.Add(new TrustAccount("Wonderwoman2", 5000, 5.0));
 
-            var TrustList = checAccounts.ConvertAll(trust => (Account)trust);
+            AccountUtil.Display(trustAccounts);
+            AccountUtil.Deposit(trustAccounts, 1000);
+            AccountUtil.Deposit(trustAccounts, 6000);
+            
+            AccountUtil.Withdraw(trustAccounts, 2000);
+            AccountUtil.Withdraw(trustAccounts, 3000);
+            AccountUtil.Withdraw(trustAccounts, 500);
 
-            AccountUntil.DesplayAccount(TrustList);
-            AccountUntil.DesplayDeposit(TrustList, 6000);
-            AccountUntil.DesplayWithdrow(TrustList, 2000);
-            AccountUntil.DesplayWithdrow(TrustList, 3000);
-            AccountUntil.DesplayWithdrow(TrustList, 500);
+            Console.WriteLine();
         }
     }
 }
