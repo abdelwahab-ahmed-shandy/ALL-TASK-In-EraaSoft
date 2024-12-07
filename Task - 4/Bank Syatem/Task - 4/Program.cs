@@ -30,10 +30,11 @@ Hints:
     Reuse existing functionality!!
     override to string always!
  */
+using System.Xml.Linq;
 
-namespace Task___4
+namespace Task_4
 {
-       public class Account
+    public class Account
     {
         public string Name { get; set; }
         public double Balance { get; set; }
@@ -67,6 +68,11 @@ namespace Task___4
         public override string ToString()
         {
             return $"Name Is {Name} , Balance {Balance}";
+        }
+
+        public static Account operator +(Account a, Account b)
+        {
+            return new Account(a.Name, a.Balance + b.Balance);
         }
     }
     public static class AccountUtil
@@ -110,7 +116,7 @@ namespace Task___4
     {
         public double InterstRate { get; set; }
 
-        public SavingsAccount(string name = "null", double balance = 0.0, double interstRate = 0.0): base(name, balance)
+        public SavingsAccount(string name = "null", double balance = 0.0, double interstRate = 0.0) : base(name, balance)
         {
             if (interstRate < 0)
                 throw new Exception("Can Not Be Less Than Zero");
@@ -122,7 +128,7 @@ namespace Task___4
             return $"{base.ToString()}, Interest Rate: {InterstRate}";
         }
     }
-    public class CheckingAccount : Account
+    public class CheckingAccount : SavingsAccount
     {
         const double Fee = 1.50;
         public CheckingAccount(string name = "Null", double balance = 0) : base(name, balance)
@@ -134,55 +140,38 @@ namespace Task___4
             return $"{base.ToString()}, Balance after fees : {Balance - Fee}";
         }
     }
-
-    public class TrustAccount : Account
+    public class TrustAccount : SavingsAccount
     {
-        public double InterstRate { get; set; }
-        //public int Count { get; set; }
-        public List <DateTime> Date { get; set; }
+        private int Count { get; set; }
+        private DateTime OverTime { get; set; }
+
         public TrustAccount(string name = "null", double balance = 0, double interstRate = 0) : base(name, balance)
         {
-            if (InterstRate < 0)
-                throw new Exception("Can Not Be Less Than Zero");
-            InterstRate = interstRate;
-            Date = new List<DateTime>();
+
         }
+
         public override bool Deposit(double amount)
         {
             if (amount >= 5000)
-            {
-                base.Deposit(50);
-                Console.WriteLine($"Add Bouns Account is {Name}");
-            }
+                Console.WriteLine($"Add Bouns {base.Deposit(50)} Account is {Name}");
+
             return base.Deposit(amount);
         }
-        
         public override bool Withdraw(double amount)
         {
-            Date = new List <DateTime>();
-            DateTime startYear = new DateTime(DateTime.Now.Year, 1, 1);
-           // DateTime EndYear = new DateTime(DateTime.Now.Year, 12, 30);
-            if(Date.Count >=3)
+            if (DateTime.Now.Year != OverTime.Year && DateTime.Now.Month == OverTime.Month
+                && DateTime.Now.Day == OverTime.Day)
             {
-                Console.WriteLine("Can Not Withdrow , failled");
-                return false;
+                OverTime = DateTime.Now;
+                Count = 3;
+                return base.Withdraw(amount);
             }
-            if (amount < 0.2)
+            if (Count <= 3 && Count >= 0 && amount <= (0.2 * Balance))
             {
-                Console.WriteLine("Invalid can not Withdrow becouse < 20%");
-                return false;
+                Count--;
+                return base.Withdraw(amount);
             }
-            if (base.Withdraw(amount))
-            {
-                Date.Add(DateTime.Now);
-                Console.WriteLine("Vailed proccess withdraw");
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("InValed proccess withdraw");
-                return false;
-            }
+            return false;
         }
         public override string ToString()
         {
@@ -242,12 +231,16 @@ namespace Task___4
             Console.WriteLine("Add 5000 Bouns 50 :");
             AccountUtil.Deposit(trustAccounts, 1000);
             AccountUtil.Deposit(trustAccounts, 6000);
-            
-            Console.WriteLine("Check 3 Widthrawal :");
 
-            //AccountUtil.Withdraw(trustAccounts, 2000);
+            Console.WriteLine("\nCheck 3 Widthrawal :");
+            AccountUtil.Withdraw(trustAccounts, 2000);
             AccountUtil.Withdraw(trustAccounts, 3000);
             AccountUtil.Withdraw(trustAccounts, 500);
+
+            //operating overloading
+            Account acc1 = new Account();
+            Account acc2 = new Account();
+            Console.WriteLine(acc1 + acc2);
 
             Console.WriteLine();
         }
