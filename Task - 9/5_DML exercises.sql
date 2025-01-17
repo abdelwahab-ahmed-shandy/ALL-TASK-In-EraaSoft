@@ -254,4 +254,60 @@ SET PhoneNumber = '123-456-7890'
 WHERE PersonID = (SELECT PersonID FROM Doctors WHERE DoctorID = 5);
 
 --============================================================================================================
--- 
+-- 25.	UPDATE JOIN: Update the city of patients who have a prescription from a specific doctor.
+UPDATE Addresses
+SET City = 'New City Name'
+FROM Addresses
+INNER JOIN Persons ON Addresses.PersonID = Persons.PersonID
+INNER JOIN Patients ON Persons.PersonID = Patients.PersonID
+INNER JOIN Prescriptions ON Patients.PatientURNumber = Prescriptions.PatientURNumber
+INNER JOIN Doctors ON Prescriptions.DoctorID = Doctors.DoctorID
+WHERE Doctors.DoctorID = 1; 
+
+--============================================================================================================
+-- 26.	DELETE: Delete a patient from the Patient table.
+DELETE FROM Patients
+WHERE PatientURNumber = 1;
+
+--============================================================================================================
+-- 28.	View: Create a view that combines patient and doctor information for easy access.
+CREATE VIEW PatientDoctorInfo AS
+SELECT 
+    PatientPersons.FirstName AS PatientFirstName,
+    PatientPersons.LastName AS PatientLastName,
+    PatientPersons.Email AS PatientEmail,
+    PatientPersons.Gender AS PatientGender,
+    PatientPersons.DateOfBirth AS PatientDOB,
+    Patients.MedicalHistory,
+    Patients.Midicare AS PatientMedicare,
+    DoctorPersons.FirstName AS DoctorFirstName,
+    DoctorPersons.LastName AS DoctorLastName,
+    DoctorPersons.Email AS DoctorEmail,
+    DoctorPersons.Gender AS DoctorGender,
+    DoctorPersons.DateOfBirth AS DoctorDOB,
+    Doctors.Specialization,
+    Doctors.YearOfExperience,
+    Doctors.LicenseNumber
+FROM Patients
+JOIN Persons PatientPersons ON Patients.PersonID = PatientPersons.PersonID
+JOIN Prescriptions Prescriptions ON Patients.PatientURNumber = Prescriptions.PatientURNumber
+JOIN Doctors Doctors ON Prescriptions.DoctorID = Doctors.DoctorID
+JOIN Persons DoctorPersons ON Doctors.PersonID = DoctorPersons.PersonID;
+
+SELECT * FROM PatientDoctorInfo;
+--============================================================================================================
+-- 29.	Index: Create an index on the 'phone' column of the Patient table to improve search performance.
+ALTER TABLE Patients
+ADD Phone nvarchar(15) NULL;
+
+-- Clustered Already available in PatientURNumber
+CREATE  Nonclustered Index IDX_Patients_Phone
+ON Patients(Phone);
+
+--============================================================================================================
+-- 30.	Backup: Perform a backup of the entire database to ensure data safety.
+
+BACKUP DATABASE PrescriptionSystemDB
+TO DISK = 'E:\1- DB\Back up DB\PrescriptionSystemDB.bak'
+
+
