@@ -72,23 +72,28 @@ namespace ToDoItem.Controllers
             return View(dbContext.toDoLists.Find(id));
         }
 
-        public IActionResult SaveEditDoList(string title, string description, DateTime deadline)
+        public IActionResult SaveEditDoList(int id, string title, string description, DateTime deadline)
         {
-            if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(description))
+            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(description))
             {
-                var newToDo = new ToDoList()
-                {
-                    Title = title,
-                    Description = description,
-                    DeadLine = deadline
-                };
-
-                dbContext.toDoLists.Add(newToDo);
-                dbContext.SaveChanges();
-                TempData["EditMessage"] = "The item was Edit successfully.";
+                TempData["EditError"] = "Title and description cannot be empty.";
+                return RedirectToAction("EditDoList", new { id });
             }
-            return RedirectToAction("DetilesName", "Home");
-            return View();
+
+            var EditToDoItem = dbContext.toDoLists.Find(id);
+            if (EditToDoItem == null)
+            {
+                return NotFound();
+            }
+
+            EditToDoItem.Title = title;
+            EditToDoItem.Description = description;
+            EditToDoItem.DeadLine = deadline;
+
+            dbContext.SaveChanges();
+            TempData["EditMessage"] = "The item was edited successfully.";
+
+            return RedirectToAction("DetilesName", "Home", new { id });
         }
 
 
