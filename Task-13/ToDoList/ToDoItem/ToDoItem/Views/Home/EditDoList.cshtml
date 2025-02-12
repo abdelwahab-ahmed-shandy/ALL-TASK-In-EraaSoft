@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Edit Do List";
+}
+
+
+<div class="container my-3">
+    <div class="row mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="display-6">
+                <a href="/Home/DetilesName" class="text-dark text-decoration-none">
+                    <img src="~/assets/images/Icone/arrow-arrow-left-change-direction-left-next-undo_122508.png" alt="Back" width="24" height="24">
+                </a>
+
+                Edit To Do Item "@Model.Title"
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <form action="/Home/SaveEditDoList">
+            <div class="mb-3">
+                <label for="name" class="form-label  fw-semibold">Edit Title </label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Edit a title" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label  fw-semibold">Edit Description</label>
+                <input type="text" class="form-control" id="description" name="description" rows="3" placeholder="Edit a description">
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label  fw-semibold">Edit DeadLine </label>
+                <input type="date" class="form-control" id="deadline" name="deadline" required>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
