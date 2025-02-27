@@ -1,0 +1,74 @@
+﻿@model Movie
+@{
+    ViewData["Title"] = "Create New Movies";
+}
+
+
+
+<div class="container">
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <h2 class="mb-3">Add New Movie</h2>
+        </div>
+        <div class="col-12 d-flex justify-content-between align-items-center">
+
+            <a asp-area="Admin" asp-controller="Movies" asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Go Back
+            </a>
+
+        </div>
+    </div>
+
+    <div class="row mt-3">
+
+        <form asp-area="Admin" asp-controller="Movies" asp-action="Create" method="post">
+
+            <div class="mb-3">
+                <label for="Name" class="form-label">Movie Name</label>
+                <input type="text" class="form-control" id="Name" name="Name" value="@Model?.Name">
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="Description" class="form-label">Movie Description</label>
+                <textarea class="form-control" id="Description" name="Description" rows="4">@Model?.Description</textarea>
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="Price" class="form-label">Movie Price</label>
+                <input type="text" class="form-control" id="Price" name="Price" value="@Model?.Price">
+                <span class="text-danger" asp-validation-for="Price"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="TrailerUrl" class="form-label">Movie Trailer Url</label>
+                <input type="text" class="form-control" id="TrailerUrl" name="TrailerUrl" value="@Model?.TrailerUrl">
+                <span class="text-danger" asp-validation-for="TrailerUrl"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="StartDate" class="form-label">Movie Start Date</label>
+                <input type="datetime" class="form-control" id="StartDate" name="StartDate" value="@Model?.StartDate">
+                <span class="text-danger" asp-validation-for="StartDate"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="EndDate" class="form-label">Movie End Date</label>
+                <input type="datetime" class="form-control" id="EndDate" name="EndDate" value="@Model?.EndDate">
+                <span class="text-danger" asp-validation-for="EndDate"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="MovieStatus" class="form-label">Movie Movie Status</label>
+                <input type="number" class="form-control" id="MovieStatus" name="MovieStatus" value="@Model?.MovieStatus">
+                <span class="text-danger" asp-validation-for="MovieStatus"></span>
+            </div>
+
+            <button type="submit" class="btn btn-secondary">Create</button>
+        </form>
+
+    </div>
+
+</div>
