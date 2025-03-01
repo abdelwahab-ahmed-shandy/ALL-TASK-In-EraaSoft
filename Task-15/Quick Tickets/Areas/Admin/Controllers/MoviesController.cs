@@ -6,10 +6,14 @@ namespace Quick_Tickets.Areas.Admin.Controllers
     public class MoviesController : Controller
     {
         private readonly IMovieRepository movieRepository;
+        private readonly ICinemaRepository cinemaRepository;
+        private readonly ICategoryRepository categoryRepository;
 
-        public MoviesController(IMovieRepository movieRepository)
+        public MoviesController(IMovieRepository movieRepository, ICategoryRepository categoryRepository, ICinemaRepository cinemaRepository)
         {
             this.movieRepository = movieRepository;
+            this.cinemaRepository = cinemaRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         public IActionResult Index()
@@ -21,9 +25,14 @@ namespace Quick_Tickets.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Cinemas = new SelectList(cinemaRepository.Get(), "Id", "Name");
+            ViewBag.Categories = new SelectList(categoryRepository.Get(), "Id", "Name");
+
             return View();
         }
 
+
+        // todo : Here 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Movie movie)
