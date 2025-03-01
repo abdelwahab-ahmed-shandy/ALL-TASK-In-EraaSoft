@@ -92,12 +92,11 @@ namespace Quick_Tickets.Areas.Admin.Controllers
             if (actorInDatabase == null)
                 return RedirectToAction("NotFoundPage", "Home", new { area = "Customer" });
 
-            // تحديث الصورة في حال رفع صورة جديدة
+
             if (file != null && file.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Assats\\Custumer\\ActorProfilePicture");
 
-                // **ضمان وجود المجلد**
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
@@ -106,13 +105,11 @@ namespace Quick_Tickets.Areas.Admin.Controllers
                 var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
                 var filePath = Path.Combine(uploadsFolder, fileName);
 
-                // حفظ الصورة الجديدة
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     file.CopyTo(stream);
                 }
 
-                // حذف الصورة القديمة إن وجدت
                 if (!string.IsNullOrEmpty(actorInDatabase.ProfilePicture))
                 {
                     var oldImagePath = Path.Combine(uploadsFolder, actorInDatabase.ProfilePicture);
@@ -122,11 +119,9 @@ namespace Quick_Tickets.Areas.Admin.Controllers
                     }
                 }
 
-                // تحديث الصورة في الكيان
                 actorInDatabase.ProfilePicture = fileName;
             }
 
-            // **تحديث البيانات بدلًا من استبدال الكيان بالكامل**
             actorInDatabase.FirstName = actor.FirstName;
             actorInDatabase.LastName = actor.LastName;
             actorInDatabase.Bio = actor.Bio;
