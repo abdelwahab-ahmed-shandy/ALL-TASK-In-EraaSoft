@@ -42,11 +42,20 @@
                 <span class="text-danger" asp-validation-for="News"></span>
             </div>
 
+
+
+
             <div class="mb-3">
                 <label for="Movies" class="form-label">Movie Name</label>
                 <select asp-for="Movies" class="form-select" multiple asp-items="@(new SelectList(ViewBag.Movies, "Id", "Name"))">
                 </select>
             </div>
+
+
+
+
+
+
 
             <div class="mb-3">
                 <label for="ProfilePicture" class="form-label">Profile Picture</label>

@@ -31,9 +31,8 @@ public partial class Movie
 
     public int MovieStatus { get; set; }
 
-    public int CinemaId { get; set; }
-
-    public int CategoryId { get; set; }
+    public List<int> CinemaIds { get; set; } = new List<int>();
+    public List<int> CategoryIds { get; set; } = new List<int>();
 
     public virtual Category Category { get; set; } = null!;
 
