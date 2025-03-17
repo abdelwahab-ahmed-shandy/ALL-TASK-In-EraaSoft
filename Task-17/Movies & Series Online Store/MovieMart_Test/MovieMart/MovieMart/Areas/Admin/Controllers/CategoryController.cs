@@ -33,8 +33,17 @@ namespace MovieMart.Areas.Admin.Controllers
             {
                 _categoryRepository.Create(category);
                 _categoryRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "The category was created successfully!";
+                TempData["MessageType"] = "success";
+
                 return RedirectToAction(nameof(Index));
             }
+            // Set the error message in case of a problem
+            TempData["Message"] = "An error occurred while creating the class!";
+            TempData["MessageType"] = "error";
+
             return View(category);
         }
 
@@ -49,16 +58,25 @@ namespace MovieMart.Areas.Admin.Controllers
             }
             return RedirectToAction("NotFound", "Home");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Category category)
         {
             if (category == null || !ModelState.IsValid)
             {
+                TempData["notifiction"] = "Category not found!";
+                TempData["MessageType"] = "error";
+
                 return RedirectToAction("NotFound", "Home");
+
             }
             _categoryRepository.Edit(category);
             _categoryRepository.SaveDB();
+
+            TempData["notifiction"] = "Edit Category Successfully!";
+            TempData["MessageType"] = "Success";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -72,7 +90,11 @@ namespace MovieMart.Areas.Admin.Controllers
             }
             _categoryRepository.Delete(category);
             _categoryRepository.SaveDB();
+
+            TempData["notifiction"] = "Category Deleted Successfully!";
+            TempData["MessageType"] = "Success";
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

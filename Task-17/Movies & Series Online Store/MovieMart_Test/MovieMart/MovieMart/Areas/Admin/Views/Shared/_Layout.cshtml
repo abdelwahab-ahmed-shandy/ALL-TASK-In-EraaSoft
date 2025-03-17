@@ -11,11 +11,14 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" />
 
-	<link href="~/assets/dashboard/css/styles.css" rel="stylesheet" />
+    <link href="~/assets/dashboard/css/styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- FontAwesome -->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 </head>
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -40,6 +43,7 @@
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#"></a>Profile</li>
                     <li><a class="dropdown-item" href="#">Settings</a></li>
                     <li><a class="dropdown-item" href="#">Activity Log</a></li>
                     <li><hr class="dropdown-divider" /></li>
@@ -54,15 +58,29 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
+
                         <div class="sb-sidenav-menu-heading">Core</div>
+
                         <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
 
-                        <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
-                            <div class="sb-nav-link-icon"> </div>
+                        <div class="sb-sidenav-menu-heading">All User</div>
+                        
+                        <a class="nav-link" asp-area="identity" asp-controller="Account" asp-action="SuperAdmins">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-crown"></i></div>
+                            Super Admins
+                        </a>
+
+                        <a class="nav-link" asp-area="identity" asp-controller="Account" asp-action="Admins">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
                             Admins
+                        </a>
+
+                        <a class="nav-link" asp-area="identity" asp-controller="Account" asp-action="Users">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Users
                         </a>
 
                         <div class="sb-sidenav-menu-heading">Management</div>
@@ -123,12 +141,20 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-	<script src="~/assets/dashboard/js/scripts.js"></script>
+    <script src="~/assets/dashboard/js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-	<script src="~/assets/dashboard/assets/demo/chart-area-demo.js"></script>
-	<script src="~/assets/dashboard/assets/demo/chart-bar-demo.js"></script>
+    <script src="~/assets/dashboard/assets/demo/chart-area-demo.js"></script>
+    <script src="~/assets/dashboard/assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-	<script src="~/assets/dashboard/js/datatables-simple-demo.js"></script>
+    <script src="~/assets/dashboard/js/datatables-simple-demo.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- jQuery (Toastr) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

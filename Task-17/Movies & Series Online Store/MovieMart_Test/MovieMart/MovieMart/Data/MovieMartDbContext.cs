@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MovieMart.Models;
+using Microsoft.EntityFrameworkCore;
+using MovieMart.Models.ViewModels;
 
 namespace MovieMart.Data
 {
@@ -241,6 +243,8 @@ namespace MovieMart.Data
              );
             #endregion
         }
+        public DbSet<MovieMart.Models.ViewModels.RegisterVM> RegisterVM { get; set; } = default!;
+        public DbSet<MovieMart.Models.ViewModels.LoginVM> LoginVM { get; set; } = default!;
 
 
 

@@ -49,7 +49,6 @@ namespace MovieMart
             // Add default token providers to support operations like password reset and email confirmation
             .AddDefaultTokenProviders();
 
-
             // Register repository services with Dependency Injection (Scoped Lifetime) 
             // This ensures that a new instance is created per request, improving efficiency 
             // while maintaining consistency within a request's lifecycle.

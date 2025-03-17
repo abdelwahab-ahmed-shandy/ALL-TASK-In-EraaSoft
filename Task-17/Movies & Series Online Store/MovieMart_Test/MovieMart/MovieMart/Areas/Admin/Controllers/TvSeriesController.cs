@@ -40,6 +40,11 @@ namespace MovieMart.Areas.Admin.Controllers
                 }
                 _tvSeriesRepository.Create(tvSeries);
                 _tvSeriesRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "The Tv-Series was created successfully!";
+                TempData["MessageType"] = "success";
+
                 return RedirectToAction("Index");
             }
             return View(tvSeries);
@@ -63,6 +68,7 @@ namespace MovieMart.Areas.Admin.Controllers
             // If the movie is not found, redirect to the "NotFound" page
             return RedirectToAction("NotFound", "Home");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(TvSeries tvSeries, IFormFile? file)
@@ -105,6 +111,10 @@ namespace MovieMart.Areas.Admin.Controllers
             {
                 _tvSeriesRepository.Edit(tvSeries);
                 _tvSeriesRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "Edit Tv-Series Successfully!";
+                TempData["MessageType"] = "Success";
 
                 // Redirect to the list of movies after editing
                 return RedirectToAction("Index");
@@ -158,6 +168,10 @@ namespace MovieMart.Areas.Admin.Controllers
                 // Delete the movie from the database
                 _tvSeriesRepository.Delete(movie);
                 _tvSeriesRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "Delete Tv-Series Successfully!";
+                TempData["MessageType"] = "Success";
 
                 // Redirect to the list of movies after deletion
                 return RedirectToAction(nameof(Index));

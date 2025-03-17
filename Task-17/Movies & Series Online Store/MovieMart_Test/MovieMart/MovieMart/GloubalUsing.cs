@@ -15,3 +15,4 @@ global using MovieMart.Models;
 global using MovieMart.Repositories;
 global using MovieMart.Repositories.IRepositories;
 global using MovieMart.Areas;
+global using MovieMart.Migrations;

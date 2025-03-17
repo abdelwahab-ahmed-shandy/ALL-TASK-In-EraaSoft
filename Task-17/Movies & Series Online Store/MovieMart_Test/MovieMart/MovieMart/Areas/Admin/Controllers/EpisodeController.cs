@@ -35,6 +35,11 @@ namespace MovieMart.Areas.Admin.Controllers
             {
                 _episodeRepository.Create(episode);
                 _episodeRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "The Episode was created successfully!";
+                TempData["MessageType"] = "success";
+
                 return RedirectToAction("Index");
             }
             return View(episode);
@@ -60,6 +65,11 @@ namespace MovieMart.Areas.Admin.Controllers
             {
                 _episodeRepository.Edit(episode);
                 _episodeRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "Edit Episode Successfully!";
+                TempData["MessageType"] = "Success";
+
                 return RedirectToAction("Index");
 
             }
@@ -75,6 +85,11 @@ namespace MovieMart.Areas.Admin.Controllers
             {
                 _episodeRepository.Delete(episode);
                 _episodeRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "Episode Deleted Successfully!";
+                TempData["MessageType"] = "Success";
+
                 return RedirectToAction(nameof(Index));
             }
             return RedirectToAction("NotFound", "Home");

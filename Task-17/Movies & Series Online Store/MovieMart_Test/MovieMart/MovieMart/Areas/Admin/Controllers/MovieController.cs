@@ -59,6 +59,10 @@ namespace MovieMart.Areas.Admin.Controllers
                 _movieRepository.Create(movie);
                 _movieRepository.SaveDB();
 
+                // Set the success message in TempData
+                TempData["notifiction"] = "The Movie was created successfully!";
+                TempData["MessageType"] = "success";
+
                 // Redirect the user to the movie list page after successful creation
                 return RedirectToAction("Index");
             }
@@ -129,6 +133,10 @@ namespace MovieMart.Areas.Admin.Controllers
                 _movieRepository.Edit(movie);
                 _movieRepository.SaveDB();
 
+                // Set the success message in TempData
+                TempData["notifiction"] = "Edit Movie Successfully!";
+                TempData["MessageType"] = "Success";
+
                 // Redirect to the list of movies after editing
                 return RedirectToAction("Index");
             }
@@ -182,6 +190,10 @@ namespace MovieMart.Areas.Admin.Controllers
                 // Delete the movie from the database
                 _movieRepository.Delete(movie);
                 _movieRepository.SaveDB();
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "Movie Deleted Successfully!";
+                TempData["MessageType"] = "Success";
 
                 // Redirect to the list of movies after deletion
                 return RedirectToAction(nameof(Index));
