@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieMart.Repositories;
 
 namespace MovieMart.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin,SuberAdmin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;

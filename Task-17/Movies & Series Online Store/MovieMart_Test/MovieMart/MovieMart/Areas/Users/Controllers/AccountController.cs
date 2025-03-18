@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Differencing;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using MovieMart.Models.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -11,16 +12,25 @@ namespace MovieMart.Areas.Users.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
+            this._roleManager = roleManager;
         }
-
-        // Register
+        #region Register
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            if (_roleManager.Roles.IsNullOrEmpty())
+            {
+                await _roleManager.CreateAsync(role: new IdentityRole("SuberAdmin"));
+                await _roleManager.CreateAsync(role: new IdentityRole("Admin"));
+                await _roleManager.CreateAsync(role: new IdentityRole("User"));
+                await _roleManager.CreateAsync(role: new IdentityRole("Customer"));
+            }
+
             return View();
         }
         [HttpPost]
@@ -44,6 +54,10 @@ namespace MovieMart.Areas.Users.Controllers
                 if (result.Succeeded)
                 {
                     // Success
+                    await _signInManager.SignInAsync(applicationUser, isPersistent: false);
+
+                    await _userManager.AddToRoleAsync(applicationUser, "Customer");
+
                     return RedirectToAction("Index", "Home", new { area = "Customer" });
                 }
                 else
@@ -60,6 +74,9 @@ namespace MovieMart.Areas.Users.Controllers
             return View(registerVM);
         }
 
+        #endregion
+
+        #region Login
         // Login
         [HttpGet]
         public IActionResult Login()
@@ -102,16 +119,17 @@ namespace MovieMart.Areas.Users.Controllers
             }
             return View(loginVM);
         }
+        #endregion
 
-        // Logout
+        #region Logout 
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account", new { area = "Users" });
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
         }
+        #endregion
 
-
-        //Profile
+        #region Profile Pages
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -134,11 +152,10 @@ namespace MovieMart.Areas.Users.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "Account", new { area = "Users" });
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
             }
 
         }
-
 
         // Display the edit profile page
         [HttpGet]
@@ -172,28 +189,38 @@ namespace MovieMart.Areas.Users.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(EditProfileVM editProfileVM)
         {
-            // Validate the entered data according to the validation rules
             if (!ModelState.IsValid)
             {
                 return View(editProfileVM);
             }
 
-            // Fetch the current user's data
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                // Redirect to the "Not Found" page if the user is not found
                 return RedirectToAction("NotFound", "Home", new { area = "Customer" });
             }
 
-            // Update basic user data (except password)
+            // Check the current password
+            if (string.IsNullOrEmpty(editProfileVM.CurrentPassword))
+            {
+                ModelState.AddModelError("", "You must enter the current password to update the profile.");
+                return View(editProfileVM);
+            }
+
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, editProfileVM.CurrentPassword);
+            if (!isPasswordValid)
+            {
+                ModelState.AddModelError("", "The current password is incorrect.");
+                return View(editProfileVM);
+            }
+
+            // Update basic data
             user.FirstName = editProfileVM.FirstName;
             user.LastName = editProfileVM.LastName;
             user.Address = editProfileVM.Address;
             user.UserName = editProfileVM.UserName;
             user.Email = editProfileVM.Email;
 
-            // Save changes to the database
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
@@ -201,50 +228,36 @@ namespace MovieMart.Areas.Users.Controllers
                 return View(editProfileVM);
             }
 
-            // Check if the user did not enter any password information. Only the data is updated, leaving the password untouched.
-            if (string.IsNullOrEmpty(editProfileVM.CurrentPassword) &&
-            (string.IsNullOrEmpty(editProfileVM.NewPassword) && string.IsNullOrEmpty(editProfileVM.ConfirmNewPassword)))
+            // If a new password is entered, change it
+            if (!string.IsNullOrEmpty(editProfileVM.NewPassword) && !string.IsNullOrEmpty(editProfileVM.ConfirmNewPassword))
             {
-                return RedirectToAction("Profile", "Account", new { area = "Users" });
-            }
-
-            // Check if the user entered a new password without entering the current one.
-            if (string.IsNullOrEmpty(editProfileVM.CurrentPassword))
-            {
-                ModelState.AddModelError("", "You must enter the current password to update the password.");
-                return View(editProfileVM);
-            }
-
-            // Verify that the new password and confirmation are entered together
-            if (string.IsNullOrEmpty(editProfileVM.NewPassword) || string.IsNullOrEmpty(editProfileVM.ConfirmNewPassword))
-            {
-                ModelState.AddModelError("", "Please enter a new password and confirm it.");
-                return View(editProfileVM);
-            }
-
-            // Verify that the new password and confirmation match
-            if (editProfileVM.NewPassword != editProfileVM.ConfirmNewPassword)
-            {
-                ModelState.AddModelError("", "The new password and confirmation do not match.");
-                return View(editProfileVM);
-            }
-
-            // Attempt to change the password
-            var passwordChangeResult = await _userManager.ChangePasswordAsync(user, editProfileVM.CurrentPassword, editProfileVM.NewPassword);
-            if (!passwordChangeResult.Succeeded)
-            {
-                // If an error occurs during the password change, error messages are displayed.
-                foreach (var error in passwordChangeResult.Errors)
+                if (editProfileVM.NewPassword != editProfileVM.ConfirmNewPassword)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError("", "The new password and confirmation do not match.");
+                    return View(editProfileVM);
                 }
-                return View(editProfileVM);
+
+                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, editProfileVM.CurrentPassword, editProfileVM.NewPassword);
+                if (!passwordChangeResult.Succeeded)
+                {
+                    foreach (var error in passwordChangeResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View(editProfileVM);
+                }
             }
 
-            // Redirect to the profile page after a successful update
-            return RedirectToAction("Profile", "Account", new { area = "Users" });
+            return RedirectToAction("Profile", "Account", new { area = "Identity" });
         }
 
+        #endregion
 
+        #region AccDenied And NotFound And IntSerErr
+        public IActionResult AccessDenied() => View();
+        public IActionResult NotFound() => View();
+        public IActionResult InternalServerError() => View();
+
+        #endregion
     }
 }
