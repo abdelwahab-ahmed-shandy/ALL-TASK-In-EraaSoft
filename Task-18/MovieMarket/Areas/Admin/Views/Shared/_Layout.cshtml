@@ -36,21 +36,36 @@
             </div>
         </form>
 
-        <!-- User Dropdown -->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user fa-fw"></i>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <!-- Hello User -->
+            <li class="nav-item d-flex align-items-center">
+                <a id="manage" class="nav-link d-flex align-items-center text-white fw-bold px-3 rounded" style="background-color: #343a40;"
+                   asp-area="Identity" asp-controller="Settings" asp-action="Profile" aria-label="Manage Account">
+                     Hello, @User.Identity.Name
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#"></a>Profile</li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Activity Log</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+            </li>
+
+            <!-- User Dropdown -->
+            <li class="nav-item dropdown d-flex align-items-center">
+                <img src="~/Assets/Users/user.png" alt="User Avatar" class="rounded-circle me-2" width="35" height="35">
+                <a class="nav-link dropdown-toggle text-white bg-dark px-2 py-1 rounded cursor-pointer border-light" id="userDropdown"
+                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User Menu">
+
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Settings" asp-action="Profile"><i class="fas fa-user me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Settings" asp-action="Manage"><i class="fas fa-cog me-2"></i> Manage</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" asp-area="Identity" asp-controller="Account" asp-action="Logout">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a>
+                    </li>
                 </ul>
             </li>
-        </ul>
+        }
+        
     </nav>
 
     <div id="layoutSidenav">

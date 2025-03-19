@@ -28,18 +28,50 @@
                         <li class="nav-item"><a class="nav-link text-dark" asp-controller="Season" asp-action="Index">Seasons</a></li>
                         <li class="nav-item"><a class="nav-link text-dark" asp-controller="TvSerie" asp-action="Index">Tv Series</a></li>
 
-                        @if (User.IsInRole("Admin") || User.IsInRole("SuberAdmin") )
+                        @*// todo: Checke What Is Error *@
+                        @* @if (User.Identity.IsAuthenticated)  *@
+                        @*  { *@
+                        @*     <p>@(User.IsInRole("SuperAdmin") ? "User is Admin" : "User is NOT Admin")</p> *@
+                        @*     <p>@User.IsInRole("Admin") </p> *@
+                        @* } *@
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark fw-semibold" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-cogs me-1"></i> Management
+                                <a class="nav-link dropdown-toggle text-dark fw-semibold d-flex align-items-center" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-cogs me-2"></i> Management
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="#"><i class="fas fa-wrench me-1"></i> Action</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-tasks me-1"></i> Another action</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-lightbulb me-1"></i> Something else here</a>
+                                <div class="dropdown-menu dropdown-menu-end shadow-sm rounded border-0">
+
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="Category" asp-action="Index">
+                                        <i class="fas fa-wrench me-2 text-primary"></i> Category
+                                    </a>
+
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="Movie" asp-action="Index">
+                                        <i class="fas fa-wrench me-2 text-primary"></i> Movie
+                                    </a>
+
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="Season" asp-action="Index">
+                                        <i class="fas fa-wrench me-2 text-primary"></i> Season
+                                    </a>
+
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="Character" asp-action="Index">
+                                        <i class="fas fa-wrench me-2 text-primary"></i> Character
+                                    </a>
+
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="TvSeries" asp-action="Index">
+                                        <i class="fas fa-wrench me-2 text-primary"></i> TvSeries
+                                    </a>
+
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="Episode" asp-action="Index">
+                                        <i class="fas fa-wrench me-2 text-primary"></i> Episode
+                                    </a>
+
+
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-link me-1"></i> Separated link</a>
+                                    <a class="dropdown-item d-flex align-items-center" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                                        <i class="fas fa-link me-2 text-danger"></i> Dashboard
+                                    </a>
                                 </div>
                             </li>
                         }
@@ -54,24 +86,43 @@
                     <ul class="navbar-nav ms-3">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a id="manage" class="nav-link text-dark" asp-area="Users" asp-controller="Account" asp-action="Manage">Hello @User.Identity.Name</a>
+                            <li class="nav-item d-flex align-items-center">
+                                <a id="manage" class="nav-link d-flex align-items-center text-dark fw-bold" asp-area="Identity" asp-controller="Settings" asp-action="Profile">
+                                    <i class="fas fa-user-circle me-2"></i> Hello, @User.Identity.Name
+                                </a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Users" asp-controller="Account" asp-action="Profile">Profile</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <form id="logoutForm" method="post" asp-area="Users" asp-controller="Account" asp-action="Logout">
-                                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-                                </form>
+                            <!-- User Dropdown -->
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <img src="~/Assets/Users/user.png" alt="User Avatar" class="rounded-circle me-2" width="35" height="35">
+                                <a class="nav-link dropdown-toggle text-dark" id="userDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Settings" asp-action="Profile"><i class="fas fa-user me-2"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Settings" asp-action="Manage"><i class="fas fa-cog me-2"></i> Manage</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form id="logoutForm" method="post" asp-area="Identity" asp-controller="Account" asp-action="Logout">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="Users" asp-controller="Account" asp-action="Register">Register</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="Users" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary fw-bold" asp-area="Identity" asp-controller="Account" asp-action="Register">
+                                    <i class="fas fa-user-plus me-2"></i> Register
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-area="Identity" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                                </a>
+                            </li>
                         }
                     </ul>
                 </div>

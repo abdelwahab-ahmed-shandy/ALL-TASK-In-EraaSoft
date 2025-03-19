@@ -5,7 +5,7 @@ using MovieMart.Models;
 namespace MovieMart.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuberAdmin")]
+    //[Authorize(Roles = "Admin,SuberAdmin")]
     public class TvSeriesController : Controller
     {
         private readonly ITvSeriesRepository _tvSeriesRepository;

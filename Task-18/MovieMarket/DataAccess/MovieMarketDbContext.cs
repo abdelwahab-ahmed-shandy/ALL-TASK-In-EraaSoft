@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MovieMart.Models;
+using Microsoft.EntityFrameworkCore;
+using MovieMarket.Models.ViewModels;
 
 namespace MovieMarket.DataAccess
 {
@@ -89,7 +91,7 @@ namespace MovieMarket.DataAccess
             #endregion
 
             #region Seed Data In Table :
-            // ✅ Add anime categories (Genres)
+            //  Add anime categories (Genres)
             modelBuilder.Entity<Category>().HasData(
             new Category { Id = 1, Name = "Shonen", Description = "Anime filled with action and adventure." },
             new Category { Id = 2, Name = "Seinen", Description = "Anime for mature audiences." },
@@ -97,7 +99,7 @@ namespace MovieMarket.DataAccess
             new Category { Id = 4, Name = "Sci-Fi", Description = "Futuristic anime with advanced technology." }
             );
 
-            //✅ Add anime series
+            // Add anime series
             modelBuilder.Entity<TvSeries>().HasData(
             new TvSeries
             {
@@ -131,7 +133,7 @@ namespace MovieMarket.DataAccess
             }
             );
 
-            //✅ Add anime movies
+            // Add anime movies
             modelBuilder.Entity<Movie>().HasData(
             new Movie
             {
@@ -145,7 +147,7 @@ namespace MovieMarket.DataAccess
                 StartDate = new DateTime(2016, 8, 26),
                 ReleaseYear = 2016,
                 Rating = 8.8,
-                CategoryId = 3 // Fantasy
+                CategoryId = 3
             },
             new Movie
             {
@@ -177,7 +179,7 @@ namespace MovieMarket.DataAccess
             }
            );
 
-            //✅ Add anime characters
+            // Add anime characters
             modelBuilder.Entity<Character>().HasData(
             new Character { Id = 1, Name = "Naruto Uzumaki", Description = "The protagonist of Naruto, dreams of becoming Hokage." },
             new Character { Id = 2, Name = "Sasuke Uchiha", Description = "Naruto’s rival, seeking revenge against his brother Itachi." },
@@ -186,7 +188,7 @@ namespace MovieMarket.DataAccess
             new Character { Id = 5, Name = "Mitsuha Miyamizu", Description = "A teenage girl who swaps bodies with a boy from Tokyo in 'Your Name'." }
             );
 
-            // ✅ Add Many-to-Many relationship between characters and series
+            //  Add Many-to-Many relationship between characters and series
             modelBuilder.Entity<CharacterTvSeries>().HasData(
             new CharacterTvSeries { CharacterId = 1, TvSeriesId = 1 }, // Naruto in Naruto
             new CharacterTvSeries { CharacterId = 2, TvSeriesId = 1 }, // Sasuke in Naruto
@@ -194,12 +196,12 @@ namespace MovieMarket.DataAccess
             new CharacterTvSeries { CharacterId = 4, TvSeriesId = 2 } // Eren in Attack on Titan
             );
 
-            // ✅ Add a Many-to-Many relationship between characters and movies
+            //  Add a Many-to-Many relationship between characters and movies
             modelBuilder.Entity<CharacterMovie>().HasData(
             new CharacterMovie { CharacterId = 5, MovieId = 1 } // Mitsuha in Your Name
             );
 
-            // ✅ Add season data for each series
+            // Add season data for each series
             modelBuilder.Entity<Season>().HasData(
             // Naruto seasons
             new Season { Id = 1, TvSeriesId = 1, SeasonNumber = 1, Title = "Naruto - Season 1", ReleaseYear = 2002 },
@@ -212,19 +214,19 @@ namespace MovieMarket.DataAccess
              new Season { Id = 6, TvSeriesId = 2, SeasonNumber = 3, Title = "Attack on Titan - Season 3", ReleaseYear = 2018 }
              );
 
-            // ✅ Add Episode Data (Episodes)
+            //  Add Episode Data (Episodes)
             modelBuilder.Entity<Episode>().HasData(
-            // 🔹 Naruto Episodes - Season 1
+            //  Naruto Episodes - Season 1
             new Episode { Id = 1, SeasonId = 1, EpisodeNumber = 1, Title = "Enter: Naruto Uzumaki!", Duration = TimeSpan.FromMinutes(23) },
             new Episode { Id = 2, SeasonId = 1, EpisodeNumber = 2, Title = "My Name is Konohamaru!", Duration = TimeSpan.FromMinutes(23) },
             new Episode { Id = 3, SeasonId = 1, EpisodeNumber = 3, Title = "Sasuke and Sakura: Friends or Foes?", Duration = TimeSpan.FromMinutes(23) },
 
-            // 🔹 Attack on Titan Episodes - Season 1
+            //  Attack on Titan Episodes - Season 1
             new Episode { Id = 4, SeasonId = 2, EpisodeNumber = 1, Title = "To You, in 2000 Years: The Fall of Shiganshina", Duration = TimeSpan.FromMinutes(25) },
              new Episode { Id = 5, SeasonId = 2, EpisodeNumber = 2, Title = "That Day: The Fall of Shiganshina, Part 2", Duration = TimeSpan.FromMinutes(25) },
              new Episode { Id = 6, SeasonId = 2, EpisodeNumber = 3, Title = "A Dim Light Amid Despair: Humanity's Comeback", Duration = TimeSpan.FromMinutes(25) },
 
-             // 🔹 One Piece Episodes - East Blue Arc
+             // One Piece Episodes - East Blue Arc
              new Episode
              {
                  Id = 7,
@@ -240,6 +242,9 @@ namespace MovieMarket.DataAccess
              );
             #endregion
         }
+        public DbSet<MovieMarket.Models.ViewModels.RegisterVM> RegisterVM { get; set; } = default!;
+        public DbSet<MovieMarket.Models.ViewModels.LoginVM> LoginVM { get; set; } = default!;
+        public DbSet<MovieMarket.Models.ViewModels.ManageProfileVM> ManageProfileVM { get; set; } = default!;
 
 
 
