@@ -5,7 +5,7 @@ using MovieMart.Repositories;
 namespace MovieMart.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = "Admin,SuberAdmin")]
+    [Authorize(Roles = "Admin,SuberAdmin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;

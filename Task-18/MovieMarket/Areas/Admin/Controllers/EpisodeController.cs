@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MovieMart.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = "Admin,SuberAdmin")]
+    [Authorize(Roles = "Admin,SuberAdmin")]
     public class EpisodeController : Controller
     {
         private readonly IEpisodeRepository _episodeRepository;

@@ -59,10 +59,20 @@
             </div>
         </form>
 
+
+
         <div class="text-center mt-3">
             <span>Already have an account?</span>
             <a asp-area="Identity" asp-controller="Account" asp-action="Login" class="btn btn-link">Login here</a>
         </div>
+    
+        <div class="text-center mt-3">
+            <p>Or register using:</p>
+            <a asp-area="Identity" asp-controller="ExternalLogin" asp-action="GoogleLogin" class="btn btn-danger">
+                <i class="fab fa-google"></i> Register with Google
+            </a>
+        </div>
+
     </div>
 </div>
 
