@@ -52,4 +52,36 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            var message = '@TempData["notifiction"]'.trim();
+            var messageType = '@TempData["MessageType"]';
+
+            console.log("Notification Message:", message);
+            console.log("Notification Type:", messageType);
+
+            if (message && message !== 'null' && message !== 'undefined' && message !== '') {
+                if (messageType) {
+                    messageType = messageType.trim().toLowerCase();
+                } else {
+                    messageType = 'info'; 
+                }
+
+                switch (messageType) {
+                    case 'success':
+                        toastr.success(message, 'Success');
+                        break;
+                    case 'error':
+                        toastr.error(message, 'Error');
+                        break;
+                    case 'warning':
+                        toastr.warning(message, 'Warning');
+                        break;
+                    default:
+                        toastr.info(message, 'Notice');
+                }
+            }
+        });
+    </script>
 }

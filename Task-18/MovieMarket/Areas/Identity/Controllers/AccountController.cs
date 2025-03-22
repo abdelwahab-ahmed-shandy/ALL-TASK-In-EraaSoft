@@ -60,6 +60,9 @@ namespace MovieMarket.Areas.Identity.Controllers
 
                 if (newUser.Succeeded)
                 {
+                    // Automatically assign the "Customer" role to each new user
+                    await _userManager.AddToRoleAsync(applicationUser, "Customer");
+
                     // Automatically log the user in after successful registration
                     await _signInManager.SignInAsync(applicationUser, isPersistent: false);
 

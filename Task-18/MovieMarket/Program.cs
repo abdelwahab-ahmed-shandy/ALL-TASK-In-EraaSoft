@@ -4,6 +4,8 @@ using MovieMart.Repositories.IRepositories;
 using MovieMart.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using MovieMarket.Repositories.IRepositories;
+using MovieMarket.Repositories;
 
 namespace MovieMarket
 {
@@ -61,6 +63,8 @@ namespace MovieMarket
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
             builder.Services.AddScoped<ITvSeriesRepository, TvSeriesRepository>();
+            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
 
             //builder.Services.AddSingleton<IEmailSender, EmailSender>();
 

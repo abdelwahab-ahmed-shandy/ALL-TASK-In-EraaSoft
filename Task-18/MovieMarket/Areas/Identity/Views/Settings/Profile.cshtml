@@ -1,4 +1,35 @@
-﻿@model MovieMarket.Models.ViewModels.ProfileVM
+﻿@section Scripts
+{
+<script>
+    $(document).ready(function ()
+    {
+    // Read the data stored in TempData and remove the extra spaces
+    var message = '@TempData["notifiction"]'.trim();
+    var messageType = '@TempData["MessageType"]'.trim();
+
+    // Check if there is an actual message to be displayed
+    if (message && message !== 'null' && message !== 'undefined' && message !== '')
+    {
+    // Determine the message type based on its value in TempData
+    switch (messageType.toLowerCase())
+    {
+         case 'success': // If the message indicates a successful operation
+            toastr.success(message, 'Success');
+                break;
+         case 'error': // If the message indicates an error
+            toastr.error(message, 'Error');
+                 break;
+         case 'warning': // If the message is a warning
+            toaster.warning(message, 'Warning');
+                break;
+         default: // Any other status is displayed as public information
+            toaster.info(message, 'Notice');
+    }
+    }
+    });
+</script>
+}
+@model MovieMarket.Models.ViewModels.ProfileVM
 @{
     ViewData["Title"] = "Profile";
 }
@@ -9,8 +40,8 @@
                 <div class="card-body text-center">
                     <div class="d-flex justify-content-center">
                         <img src="~/Assets/Users/user.png"
-                             class="rounded-circle img-thumbnail shadow-sm"
-                             alt="User Avatar" width="150" height="150" />
+                        class="rounded-circle img-thumbnail shadow-sm"
+                        alt="User Avatar" width="150" height="150" />
                     </div>
 
                     <h3 class="card-title fw-bold mt-3">@Model.FirstName @Model.LastName</h3>
@@ -29,13 +60,22 @@
                         </p>
                     </div>
 
-                    <div class="mt-4">
-                        <a asp-area="Identity" asp-controller="Settings" asp-action="Manage" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-edit"></i> Edit Profile
+                    <div class="mt-4 d-flex justify-content-center gap-3">
+                        <a asp-area="Identity" asp-controller="Settings" asp-action="Manage" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-edit"></i> Edit Profile
                         </a>
+
+
+                        <a asp-area="Identity" asp-controller="Settings" asp-action="DeleteAccount" class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash-alt"></i> Do you want to delete the account?
+                        </a>
+                        
+                    </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+

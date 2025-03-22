@@ -41,8 +41,8 @@
             <!-- Hello User -->
             <li class="nav-item d-flex align-items-center">
                 <a id="manage" class="nav-link d-flex align-items-center text-white fw-bold px-3 rounded" style="background-color: #343a40;"
-                   asp-area="Identity" asp-controller="Settings" asp-action="Profile" aria-label="Manage Account">
-                     Hello, @User.Identity.Name
+                asp-area="Identity" asp-controller="Settings" asp-action="Profile" aria-label="Manage Account">
+                    Hello, @User.Identity.Name
                 </a>
             </li>
 
@@ -50,7 +50,7 @@
             <li class="nav-item dropdown d-flex align-items-center">
                 <img src="~/Assets/Users/user.png" alt="User Avatar" class="rounded-circle me-2" width="35" height="35">
                 <a class="nav-link dropdown-toggle text-white bg-dark px-2 py-1 rounded cursor-pointer border-light" id="userDropdown"
-                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User Menu">
+                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User Menu">
 
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
@@ -65,7 +65,7 @@
                 </ul>
             </li>
         }
-        
+
     </nav>
 
     <div id="layoutSidenav">
@@ -81,22 +81,30 @@
                             Dashboard
                         </a>
 
-                        <div class="sb-sidenav-menu-heading">All User</div>
-                        
-                        <a class="nav-link" asp-area="identity" asp-controller="Account" asp-action="SuperAdmins">
-                            <div class="sb-nav-link-icon"><i class="fas fa-user-crown"></i></div>
-                            Super Admins
-                        </a>
+                        @if (User.IsInRole("SuberAdmin") || User.IsInRole("Admin") )
+                        {
+                            <div class="sb-sidenav-menu-heading">All User</div>
+                            @if (User.IsInRole("SuberAdmin"))
+                            {
+                                <a class="nav-link" asp-area="Admin" asp-controller="SuperAdmins" asp-action="AllSuperAdmins">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-user-crown"></i></div>
+                                    Super Admins
+                                </a>
 
-                        <a class="nav-link" asp-area="identity" asp-controller="Account" asp-action="Admins">
-                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
-                            Admins
-                        </a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="Admins" asp-action="AllAdmins">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                                    Admins
+                                </a>
+                            }
 
-                        <a class="nav-link" asp-area="identity" asp-controller="Account" asp-action="Users">
-                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                            Users
-                        </a>
+
+                            <a class="nav-link" asp-area="Admin" asp-controller="Customers" asp-action="AllCustomers">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Customers
+                            </a>
+                        }
+
+
 
                         <div class="sb-sidenav-menu-heading">Management</div>
                         <a class="nav-link" asp-area="Admin" asp-controller="Movie" asp-action="Index">

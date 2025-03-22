@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MovieMarket.Models.ViewModels;
+using MovieMarket.Repositories.IRepositories;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MovieMarket.Areas.Identity.Controllers
@@ -12,12 +13,16 @@ namespace MovieMarket.Areas.Identity.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IApplicationUserRepository _applicationUserRepository;
 
         public SettingsController(UserManager<ApplicationUser> userManager,
-                                  RoleManager<IdentityRole> roleManager)
+                                  RoleManager<IdentityRole> roleManager,
+                                  SignInManager<ApplicationUser> signInManager)
         {
             this._userManager = userManager;
             this._roleManager = roleManager;
+            this._signInManager = signInManager;
         }
 
         #region Profile
@@ -152,8 +157,74 @@ namespace MovieMarket.Areas.Identity.Controllers
                 }
             }
 
+            TempData["notifiction"] = "Update You Account Successfully!";
+            TempData["MessageType"] = "Success";
             // Redirect the user to the profile page after a successful update
             return RedirectToAction("Profile", "Settings", new { area = "Identity" });
+        }
+
+        #endregion
+
+        #region Delete Customer (No one uses the delete button except the account owner.)
+
+        // Displays the account deletion confirmation page when requested via HTTP GET
+        [HttpGet]
+        public IActionResult DeleteAccount()
+        {
+            return View();
+        }
+
+        // Processes the account deletion request when sent via HTTP POST
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Protects against CSRF (Cross-Site Request Forgery) attacks
+        public async Task<IActionResult> ConfirmDeleteAccount()
+        {
+            // Gets the current user via UserManager
+            var user = await _userManager.GetUserAsync(User);
+
+            // If the user is not found, an error message is displayed and redirects to the home page
+            if (user == null)
+            {
+                TempData["notifiction"] = "User not found.";
+                TempData["MessageType"] = "Error";
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Checks if the user has the "Admin" or "SuperAdmin" role
+            if (await _userManager.IsInRoleAsync(user, "Admin") || await _userManager.IsInRoleAsync(user, "SuperAdmin"))
+            {
+                // Prevents account deletion if the user is an administrator (Admin or SuperAdmin)
+                TempData["notifiction"] = "Admins and SuperAdmins cannot delete their own accounts.";
+                TempData["MessageType"] = "Error";
+                return RedirectToAction("Profile");
+            }
+
+            // Updates the Security Stamp to ensure session security before deleting the account
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            // Deletes the account via the UserManager
+            var result = await _userManager.DeleteAsync(user);
+
+            // If the deletion fails, an error message is displayed and the user is redirected to the profile page.
+            if (!result.Succeeded)
+            {
+
+                // Set the success message in TempData
+                TempData["notifiction"] = "An error occurred while deleting the account.";
+                TempData["MessageType"] = "error";
+
+                return RedirectToAction("Profile");
+            }
+
+            // Signs the user out after deleting their account.
+
+            await _signInManager.SignOutAsync();
+
+            // Displays a success message and redirects the user to the "Customer" section home page.
+            TempData["notifiction"] = "Your account has been successfully deleted.";
+            TempData["MessageType"] = "Warning";
+
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
         }
 
         #endregion
