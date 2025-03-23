@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using MovieMarket.Repositories.IRepositories;
 using MovieMarket.Repositories;
+using MovieMarket.Services;
+using System.Configuration;
 
 namespace MovieMarket
 {
@@ -27,31 +29,26 @@ namespace MovieMarket
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            // Add identity services to the application
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
+            {
+                // Login settings:
+                option.SignIn.RequireConfirmedEmail = true;
+
+                // Password requirements:
+                option.Password.RequireUppercase = true;
+                option.Password.RequireNonAlphanumeric = true;
+                option.Password.RequiredLength = 8;
+
+                // User requirements:
+                option.User.RequireUniqueEmail = true;
+
+            }
+            )
+            // Bind the identity to the database using Entity Framework
             .AddEntityFrameworkStores<MovieMarketDbContext>()
+            // Add default token providers to support operations like password reset and email confirmation
             .AddDefaultTokenProviders();
-
-
-            //// Add identity services to the application
-            //builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-            //{
-            //    // Password requirements:
-            //    options.Password.RequireUppercase = true;
-            //    options.Password.RequireNonAlphanumeric = true;
-            //    options.Password.RequiredLength = 8;
-
-            //    // User requirements:
-            //    options.User.RequireUniqueEmail = true;
-
-            //    // Login settings:
-            //    options.SignIn.RequireConfirmedEmail = false;
-            //})
-            //.AddRoles<IdentityRole>()
-            //// Bind the identity to the database using Entity Framework
-            //.AddEntityFrameworkStores<MovieMarketDbContext>()
-            //// Add default token providers to support operations like password reset and email confirmation
-            //.AddDefaultTokenProviders();
-
 
 
             // Register repository services with Dependency Injection (Scoped Lifetime) 
@@ -65,12 +62,8 @@ namespace MovieMarket
             builder.Services.AddScoped<ITvSeriesRepository, TvSeriesRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
-
-            //builder.Services.AddSingleton<IEmailSender, EmailSender>();
-
-
-
-
+            // Email Sender .
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             // Configure authentication services in the application
             builder.Services.AddAuthentication(options =>

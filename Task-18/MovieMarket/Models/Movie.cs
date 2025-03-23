@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using MovieMarket.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MovieMart.Models
@@ -48,5 +49,9 @@ namespace MovieMart.Models
         // Many-to-Many: Character <-> Movie
         [ValidateNever]
         public ICollection<CharacterMovie> CharacterMovies { get; set; } = new List<CharacterMovie>();
+
+        // Many-to-Many: Cinema <-> Movie
+        [ValidateNever]
+        public ICollection<CinemaMovie> CinemaMovies { get; set; } = new List<CinemaMovie>();
     }
 }
