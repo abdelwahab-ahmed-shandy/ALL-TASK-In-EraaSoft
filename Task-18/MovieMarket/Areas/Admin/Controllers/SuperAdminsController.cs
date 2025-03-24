@@ -17,21 +17,80 @@ namespace MovieMarket.Areas.Admin.Controllers
             this._applicationUserRepository = applicationUserRepository;
         }
 
-        public async Task<IActionResult> AllSuperAdmins()
+        #region View Super Admin
+        public async Task<IActionResult> AllSuperAdmins(string? query)
         {
-            var users = _applicationUserRepository.Get().ToList();
-            var alldmins = new List<ApplicationUser>();
 
-            foreach (var user in users)
+            IEnumerable<ApplicationUser> allUsers = _applicationUserRepository.Get().AsNoTracking().ToList();
+
+            var allSuberAdmin = new List<ApplicationUser>();
+
+            foreach (var user in allUsers)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                if (roles.Contains("SuberAdmin"))
+                var role = await _userManager.GetRolesAsync(user);
+
+                if (role.Contains("SuberAdmin"))
                 {
-                    alldmins.Add(user);
+                    allSuberAdmin.Add(user);
                 }
             }
 
-            return View(alldmins);
+            if (query != null)
+            {
+                allSuberAdmin = allSuberAdmin.Where(e => (e.UserName ?? "").Contains(query)
+                                                          || (e.Email ?? "").Contains(query)
+                                                          || (e.FirstName ?? "").Contains(query)
+                                                          || (e.LastName ?? "").Contains(query)
+                                                          || (e.Address ?? "").Contains(query)
+                                                          || (e.Id ?? "").Contains(query))
+                                                          .ToList();
+            }
+
+            return View(allSuberAdmin.ToList());
         }
+        #endregion
+
+        #region New Super Admin
+
+        // Display the new Super Admin creation form
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        // Process a new Super Admin creation request when the form is submitted
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Protection against CSRF attacks
+        public async Task<IActionResult> Create(ApplicationUser applicationUser)
+        {
+            // Validate the entered data before saving
+            if (ModelState.IsValid)
+            {
+                // Add the new Super Admin to the database
+                _applicationUserRepository.Create(applicationUser);
+
+                // Assign the "Super Admin" role to the new user
+                await _userManager.AddToRoleAsync(applicationUser, "SuberAdmin");
+
+                // Save changes to the database
+                _applicationUserRepository.SaveDB();
+
+                // Store a success message in TempData to display after redirection
+                TempData["notifiction"] = "The Customer was created successfully!";
+                TempData["MessageType"] = "success";
+
+                // Redirect to the All Suber Admin view page
+                return RedirectToAction(nameof(AllSuperAdmins));
+            }
+
+            // If there is an input error, re-render the form with the same data
+            return View(applicationUser);
+        }
+
+        #endregion
+
+
+
     }
 }

@@ -48,17 +48,30 @@
         </a>
     </div>
 
+    <!-- Search Bar -->
+    <div class="row mb-3">
+        <div class="col-12 d-sm-flex justify-content-center">
+            <form class="input-group w-50" method="get" action="@Url.Action("AllCustomers", "Customers")">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="query" name="query" placeholder="Search users..." value="@Context.Request.Query["query"]" />
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
             <thead class="table-dark text-center">
                 <tr>
                     <th>ID</th>
                     <th>Full Name</th>
-                    <th>User Name</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
                     <th>Email</th>
                     <th>Address</th>
                     <th>Action</th>
-
                 </tr>
             </thead>
             <tbody class="text-center align-middle">
@@ -66,31 +79,24 @@
                 {
                     <tr>
                         <td>@item.Id</td>
-                        <td>@item.FirstName @item.LastName</td>
+                        <td>@item.FirstName </td>
+                        <td>@item.LastName</td>
                         <td>@item.UserName</td>
                         <td>@item.Email</td>
                         <td>@item.Address</td>
-
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
-                                <!-- Edit button -->
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning me-1">
-                                    <i class="fas fa-edit"></i>Edit
+                                    <i class="fas fa-edit"></i> Edit
                                 </a>
-
-                                <!--Ban button -->
                                 <a asp-action="Block" asp-route-id="@item.Id" class="btn btn-info me-1">
-                                    <i class="fas fa-block"></i>Block
+                                    <i class="fas fa-user-slash"></i> Block
                                 </a>
-
-                                <!-- Delete button -->
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id">
-                                    <i class="fas fa-trash-alt"></i>Delete
+                                    <i class="fas fa-trash-alt"></i> Delete
                                 </button>
                             </div>
                         </td>
-
-
                     </tr>
 
                     <!-- Delete Confirmation Modal -->

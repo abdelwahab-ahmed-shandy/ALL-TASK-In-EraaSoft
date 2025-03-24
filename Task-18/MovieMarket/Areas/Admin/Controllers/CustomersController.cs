@@ -23,29 +23,37 @@ namespace MovieMarket.Areas.Admin.Controllers
         #region View All Customers
         // Define an Action to retrieve all customers
         [HttpGet]
-        public async Task<IActionResult> AllCustomers()
+        public async Task<IActionResult> AllCustomers(string? query, int page = 1)
         {
-            // Fetch all users from the database and convert them to a list
-            var users = _applicationUserRepository.Get().ToList();
 
-            // Create a list to store only customers (except administrators)
-            var allCustomers = new List<ApplicationUser>();
+            IEnumerable<ApplicationUser> allUsers = _applicationUserRepository.Get().AsNoTracking().ToList();
 
-            // Iterate through all users to check their roles
-            foreach (var user in users)
+            var allCustomer = new List<ApplicationUser>();
+
+            foreach (var user in allUsers)
             {
-                // Fetch roles for the current user
-                var roles = await _userManager.GetRolesAsync(user);
+                var role = await _userManager.GetRolesAsync(user);
 
-                // Add the user to the customer list if it is neither "Admin" nor "SuperAdmin"
-                if (!roles.Contains("Admin") && !roles.Contains("SuberAdmin"))
+                if (!role.Contains("Admin") && !role.Contains("SuberAdmin") && role.Contains("Customer"))
                 {
-                    allCustomers.Add(user);
+                    allCustomer.Add(user);
                 }
             }
 
-            // Pass the customer list to the View
-            return View(allCustomers);
+            if (query != null)
+            {
+                allCustomer = allCustomer.Where(e => (e.UserName ?? "").Contains(query)
+                                                          || (e.Email ?? "").Contains(query)
+                                                          || (e.FirstName ?? "").Contains(query)
+                                                          || (e.LastName ?? "").Contains(query)
+                                                          || (e.Address ?? "").Contains(query)
+                                                          || (e.Id ?? "").Contains(query))
+                                                          .ToList();
+            }
+            // todo: here a page Numer :: 52
+            // allCustomer = await allCustomer.Skip((page - 1) * 5).Take(count: 5);
+
+            return View(allCustomer.ToList());
         }
         #endregion
 
@@ -68,7 +76,12 @@ namespace MovieMarket.Areas.Admin.Controllers
             {
                 // Add the new customer to the database
                 _applicationUserRepository.Create(applicationUser);
-                _applicationUserRepository.SaveDB(); // Save changes to the database
+
+                // Assign the "Customer" role to the new user
+                await _userManager.AddToRoleAsync(applicationUser, "Customer");
+
+                //Save changes to the database
+                _applicationUserRepository.SaveDB();
 
                 // Store a success message in TempData to display after redirection
                 TempData["notifiction"] = "The Customer was created successfully!";
@@ -137,8 +150,26 @@ namespace MovieMarket.Areas.Admin.Controllers
         //}
         #endregion
 
+        // todo:here......
+        // #region Delete Customer Account :
 
+        //[HttpDelete"{id}"]
+        //public async Task<IActionResult> Delete(int Id)
+        //{
+        //    var userDelete = await _applicationUserRepository.Get(u => u.Id == Id);
 
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _applicationUserRepository.Delete(userDelete);
+        //    _applicationUserRepository.SaveDB();
+
+        //    return RedirectToAction("AllCustomers", "Customers", new { area = "Admin" });
+        //}
+
+        //#endregion
 
     }
 }

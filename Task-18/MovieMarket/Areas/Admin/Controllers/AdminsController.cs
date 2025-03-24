@@ -17,21 +17,78 @@ namespace MovieMarket.Areas.Admin.Controllers
             this._userManager = userManager;
         }
 
-        public async Task<IActionResult> AllAdmins()
+        #region View Admin
+        public async Task<IActionResult> AllAdmins(string? query)
         {
-            var users = _applicationUserRepository.Get().ToList();
-            var alldmins = new List<ApplicationUser>();
+            IEnumerable<ApplicationUser> allUsers = _applicationUserRepository.Get().AsNoTracking().ToList();
 
-            foreach (var user in users)
+            var allAdmins = new List<ApplicationUser>();
+
+            foreach (var user in allUsers)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                if (roles.Contains("Admin"))
+                var role = await _userManager.GetRolesAsync(user);
+
+                if (!role.Contains("SuberAdmin") && role.Contains("Admin"))
                 {
-                    alldmins.Add(user);
+                    allAdmins.Add(user);
                 }
             }
 
-            return View(alldmins);
+            if (query != null)
+            {
+                allAdmins = allAdmins.Where(e => (e.UserName ?? "").Contains(query)
+                                                          || (e.Email ?? "").Contains(query)
+                                                          || (e.FirstName ?? "").Contains(query)
+                                                          || (e.LastName ?? "").Contains(query)
+                                                          || (e.Address ?? "").Contains(query)
+                                                          || (e.Id ?? "").Contains(query))
+                                                          .ToList();
+            }
+
+            return View(allAdmins.ToList());
         }
+
+        #endregion
+
+        #region Create New Admin
+
+        // Display the new Admin creation form
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        // Process a new Admin creation request when the form is submitted
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Protection against CSRF attacks
+        public async Task<IActionResult> Create(ApplicationUser applicationUser)
+        {
+            // Validate the entered data before saving
+            if (ModelState.IsValid)
+            {
+                // Add the new Admin to the database
+                _applicationUserRepository.Create(applicationUser);
+
+                // Assign the "Admin" role to the new user
+                await _userManager.AddToRoleAsync(applicationUser, "Admin");
+
+                // Save changes to the database
+                _applicationUserRepository.SaveDB();
+
+                // Store a success message in TempData to display after redirection
+                TempData["notifiction"] = "The Customer was created successfully!";
+                TempData["MessageType"] = "success";
+
+                // Redirect to the All Admins view page
+                return RedirectToAction(nameof(AllAdmins));
+            }
+
+            // If there is an input error, re-render the form with the same data
+            return View(applicationUser);
+        }
+
+        #endregion
+
     }
 }
