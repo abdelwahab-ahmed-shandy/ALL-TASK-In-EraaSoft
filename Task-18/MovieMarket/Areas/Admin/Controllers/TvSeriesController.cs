@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieMart.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MovieMart.Areas.Admin.Controllers
 {
@@ -13,9 +14,34 @@ namespace MovieMart.Areas.Admin.Controllers
         {
             this._tvSeriesRepository = tvSeriesRepository;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1)
         {
-            return View(_tvSeriesRepository.Get().ToList());
+            var tvSeries = _tvSeriesRepository.Get().ToList();
+
+            if (query != null)
+            {
+                tvSeries = tvSeries.Where(e => (e.Title ?? "").Contains(query)
+                || (e.Description ?? "").Contains(query)
+                || (e.Author ?? "").Contains(query)
+                || (e.ImgUrl ?? "").Contains(query)
+                || (e.ReleaseYear.ToString().Contains(query))
+                || (e.Rating.HasValue ? e.Rating.Value.ToString("0") : "").Contains(query)
+                ).ToList();
+            }
+
+            int pageSize = 5;
+            int totalCustomers = tvSeries.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            tvSeries = tvSeries.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
+            return View(tvSeries.ToList());
         }
 
         [HttpGet]

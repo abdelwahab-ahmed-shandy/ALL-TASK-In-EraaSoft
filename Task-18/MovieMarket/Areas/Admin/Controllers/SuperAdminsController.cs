@@ -18,7 +18,7 @@ namespace MovieMarket.Areas.Admin.Controllers
         }
 
         #region View Super Admin
-        public async Task<IActionResult> AllSuperAdmins(string? query)
+        public async Task<IActionResult> AllSuperAdmins(string? query, int page)
         {
 
             IEnumerable<ApplicationUser> allUsers = _applicationUserRepository.Get().AsNoTracking().ToList();
@@ -45,6 +45,24 @@ namespace MovieMarket.Areas.Admin.Controllers
                                                           || (e.Id ?? "").Contains(query))
                                                           .ToList();
             }
+
+
+            // Calculate the number of pages required, so that there are 5 Suber-Admin per page
+            int pageSize = 5;
+            int totalCustomers = allSuberAdmin.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            // Check if the requested page does not exist
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            // Split the Suber-Admin and display only 5 per page
+            allSuberAdmin = allSuberAdmin.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Pass the number of pages to the View
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
 
             return View(allSuberAdmin.ToList());
         }

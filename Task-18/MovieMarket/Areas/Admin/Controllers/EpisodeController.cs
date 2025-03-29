@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MovieMart.Areas.Admin.Controllers
 {
@@ -14,12 +15,36 @@ namespace MovieMart.Areas.Admin.Controllers
             this._episodeRepository = episodeRepository;
             this._seasonRepository = seasonRepository;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1)
         {
             var episode = _episodeRepository.Get()
                 .Include(e => e.Season)
                 .ToList();
-            return View(episode);
+
+            if (query != null)
+            {
+                episode = episode.Where(e => (e.Title ?? "").Contains(query)
+                                           || e.EpisodeNumber.ToString().Contains(query)
+                                           || e.Duration.ToString(@"hh\:mm\:ss").Contains(query)
+                                           || (e.VideoUrl ?? "").Contains(query)
+                                           || (e.Season?.Title ?? "").Contains(query))
+                                            .ToList();
+            }
+
+            int pageSize = 5;
+            int totalCustomers = episode.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            episode = episode.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
+
+            return View(episode.ToList());
         }
 
         [HttpGet]

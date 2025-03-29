@@ -48,6 +48,19 @@
         </a>
     </div>
 
+    <!-- Search Bar -->
+    <div class="row mb-3">
+        <div class="col-12 d-sm-flex justify-content-center">
+            <form class="input-group w-50" method="get" action="@Url.Action("Index", "TvSeries")">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="query" name="query" placeholder="Search users..." value="@Context.Request.Query["query"]" />
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
             <thead class="table-dark text-center">
@@ -118,4 +131,18 @@
             </tbody>
         </table>
     </div>
+
+    <div class="row">
+        <nav aria-label="...">
+            <ul class="pagination">
+                @for (int i = 1; i <= ViewBag.totalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.currentPage ? "active" : "")">
+                        <a class="page-link" href="/Admin/TvSeries/Index?page=@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
 </div>

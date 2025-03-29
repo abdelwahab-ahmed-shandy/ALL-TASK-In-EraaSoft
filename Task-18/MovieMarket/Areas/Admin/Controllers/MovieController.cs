@@ -14,11 +14,38 @@ namespace MovieMart.Areas.Admin.Controllers
             this._movieRepository = movieRepository;
             this._categoryRepository = categoryRepository;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1)
         {
             var movie = _movieRepository.Get()
                 .Include(c => c.Category)
                 .ToList();
+
+            if (query != null)
+            {
+                movie = movie.Where(e => (e.Title ?? "").Contains(query)
+                || (e.Description ?? "").Contains(query)
+                || (e.Category.Name ?? "").Contains(query)
+                || (e.Author ?? "").Contains(query)
+                || e.Price.ToString("0").Contains(query)
+                || (e.StartDate?.ToString("yyyy-MM-dd") ?? "").Contains(query)
+                || (e.EndDate?.ToString("yyyy-MM-dd") ?? "").Contains(query)
+                || (e.Duration is TimeSpan ts ? ts.ToString(@"hh\:mm\:ss") : "").Contains(query)
+                || (e.Rating.HasValue ? e.Rating.Value.ToString("0") : "").Contains(query)
+                ).ToList();
+            }
+
+            int pageSize = 5;
+            int totalCustomers = movie.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            movie = movie.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
             return View(movie);
         }
 

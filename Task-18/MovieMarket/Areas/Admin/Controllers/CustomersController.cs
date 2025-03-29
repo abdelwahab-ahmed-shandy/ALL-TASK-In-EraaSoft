@@ -25,34 +25,52 @@ namespace MovieMarket.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> AllCustomers(string? query, int page = 1)
         {
-
+            // Retrieve all users from the database without tracking entities
             IEnumerable<ApplicationUser> allUsers = _applicationUserRepository.Get().AsNoTracking().ToList();
 
+            // Create a list to store only customers
             var allCustomer = new List<ApplicationUser>();
 
+            // Filter users so that only those with the "Customer" role and not those with the "Admin" or "SuperAdmin" role are retained
             foreach (var user in allUsers)
             {
-                var role = await _userManager.GetRolesAsync(user);
+                var role = await _userManager.GetRolesAsync(user); // Get user roles
 
                 if (!role.Contains("Admin") && !role.Contains("SuberAdmin") && role.Contains("Customer"))
                 {
-                    allCustomer.Add(user);
+                    allCustomer.Add(user); // Add the user to the customer list
                 }
             }
 
+            // Check if there is a search query
             if (query != null)
             {
-                allCustomer = allCustomer.Where(e => (e.UserName ?? "").Contains(query)
-                                                          || (e.Email ?? "").Contains(query)
-                                                          || (e.FirstName ?? "").Contains(query)
-                                                          || (e.LastName ?? "").Contains(query)
-                                                          || (e.Address ?? "").Contains(query)
-                                                          || (e.Id ?? "").Contains(query))
-                                                          .ToList();
+                allCustomer = allCustomer.Where(e => (e.UserName ?? "").Contains(query) // Search for the username
+                || (e.Email ?? "").Contains(query) // Search for the email
+                || (e.FirstName ?? "").Contains(query) // Search for the first name
+                || (e.LastName ?? "").Contains(query) // Search for the last name
+                || (e.Address ?? "").Contains(query) // Search for the address
+                || (e.Id ?? "").Contains(query)) // Search for the ID number
+                .ToList();
             }
-            // todo: here a page Numer :: 52
-            // allCustomer = await allCustomer.Skip((page - 1) * 5).Take(count: 5);
 
+            // Calculate the number of pages required, so that there are 5 customers per page
+            int pageSize = 5;
+            int totalCustomers = allCustomer.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            // Check if the requested page does not exist
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            // Split the customers and display only 5 per page
+            allCustomer = allCustomer.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Pass the number of pages to the View
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
+            // Return the list of customers to the View
             return View(allCustomer.ToList());
         }
         #endregion

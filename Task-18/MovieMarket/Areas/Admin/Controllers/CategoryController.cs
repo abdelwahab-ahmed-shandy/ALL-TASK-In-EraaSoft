@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieMart.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MovieMart.Areas.Admin.Controllers
 {
@@ -16,9 +17,34 @@ namespace MovieMart.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1)
         {
             var category = _categoryRepository.Get().ToList();
+
+
+            // Check if there is a search query
+            if (query != null)
+            {
+                category = category.Where(e => (e.Name ?? "").Contains(query) // Search for the Name
+                || (e.Description ?? "").Contains(query)) // Search for the Description
+                .ToList();
+            }
+
+            // Calculate the number of pages required, so that there are 5 customers per page
+            int pageSize = 5;
+            int totalCustomers = category.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            // Check if the requested page does not exist
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            // Split the customers and display only 5 per page
+            category = category.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Pass the number of pages to the View
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
 
             return View(category);
         }

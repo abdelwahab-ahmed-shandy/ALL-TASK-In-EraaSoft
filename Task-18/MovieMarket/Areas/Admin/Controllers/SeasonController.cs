@@ -15,12 +15,39 @@ namespace MovieMart.Areas.Admin.Controllers
             this._seasonRepository = seasonRepository;
             _tvSeriesRepository = tvSeriesRepository;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1)
         {
             var season = _seasonRepository.Get()
                 .Include(s => s.TvSeries)
                 .ToList();
-            return View(season);
+
+            // Check if there is a search query
+            if (query != null)
+            {
+                season = season.Where(e => (e.Title ?? "").Contains(query)
+                                         || e.ReleaseYear.ToString().Contains(query)
+                                         || e.SeasonNumber.ToString().Contains(query)
+                                                                                    ).ToList();
+            }
+
+            // Calculate the number of pages required, so that there are 5 customers per page
+            int pageSize = 5;
+            int totalCustomers = season.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCustomers / pageSize);
+
+            // Check if the requested page does not exist
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            // Split the customers and display only 5 per page
+            season = season.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Pass the number of pages to the View
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
+
+            return View(season.ToList());
         }
         [HttpGet]
         public IActionResult Create()

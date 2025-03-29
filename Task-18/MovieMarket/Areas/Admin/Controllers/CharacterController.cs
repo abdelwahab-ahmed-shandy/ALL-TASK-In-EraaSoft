@@ -16,11 +16,30 @@ namespace MovieMart.Areas.Admin.Controllers
             this._tvSeriesRepository = tvSeriesRepository;
             this._movieRepository = movieRepository;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? query, int page = 1)
         {
+            var characters = _characterRepository.Get().ToList();
 
+            if (query != null)
+            {
+                characters = characters.Where(e => (e.Name ?? "").Contains(query) ||
+                                                    (e.Description ?? "").Contains(query)
+                                                    ).ToList();
+            }
 
-            return View(_characterRepository.Get().ToList());
+            int pageSize = 5;
+            int totalCharacters = characters.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCharacters / pageSize);
+
+            if (page > totalPages && totalPages > 0)
+                return NotFound();
+
+            characters = characters.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.totalPages = totalPages;
+            ViewBag.currentPage = page;
+
+            return View(characters.ToList());
         }
 
 

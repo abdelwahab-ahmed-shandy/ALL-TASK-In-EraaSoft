@@ -111,7 +111,7 @@ namespace MovieMarket.Areas.Identity.Controllers
                 }
             }
 
-            // 🔄 Redisplay the registration page if there are input errors.
+            //  Redisplay the registration page if there are input errors.
             return View(registerVM);
         }
 
